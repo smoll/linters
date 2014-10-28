@@ -140,6 +140,24 @@ var register = function (gulp, options) {
             .on('data', reporter.py);
     });
 
+    /**
+     * Task: Ruby linter (RuboCop)
+     *
+     * Look for all the ruby files within a specific directory and run
+     * rubocop against them.
+     */
+    gulp.task('linter:ruby', function () {
+        var rblint = shell([
+                'rubocop <%= file.path %>'
+            ],
+            {quiet: true, ignoreErrors: true});
+
+        return gulp.src(config.files.rb, {read: false})
+            .pipe(rblint)
+            .on('data', reporter.rb);
+    });
+
+
 
     /**
      * Task: php linter (PHP_CodeSniffer)
@@ -181,10 +199,12 @@ var register = function (gulp, options) {
 module.exports = {
     config: config,
     register: register,
-    all: ['linter:scss', 'linter:js', 'linter:python', 'linter:php'],
+    all: [
+        'linter:scss', 'linter:js', 'linter:python', 'linter:php',
+        'linter:ruby'],
     dev: [
         'linter:scss', 'linter:js', 'linter:python', 'linter:php',
-        'watch:all'],
+        'linter:ruby', 'watch:all'],
     php: ['linter:php'],
     python: ['linter:python'],
     scss: ['linter:scss'],
